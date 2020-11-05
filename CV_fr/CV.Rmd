@@ -1,0 +1,118 @@
+---
+name: Hugo
+surname: Gruson
+position: "Post-doctorant / Développeur R"
+address: "MIVEGEC, Institut de Recherche pour le Développement, Montpellier"
+phone: +33 6 32 83 49 13
+www: www.normalesup.org/~hgruson
+email: "hugo.gruson@normalesup.org"
+twitter: grusonh
+github: bisaloo
+date: "`r format(Sys.time(), '%B %Y')`"
+output: vitae::awesomecv
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(vitae)
+```
+
+# Education
+
+```{r}
+library(tibble)
+tribble(
+  ~ Degree, ~ Year, ~ Institution, ~ Where, ~ Mention,
+  "Post-doctorant / Développeur R en Épidémiologie", "2020", "MIVEGEC, Institut de Recherche pour le Développement", "Montpellier, France", "",
+  "Doctorant en Écologie et Sciences et l'Évolution", "2019", "Université de Montpellier", "Montpellier, France", "",
+  "Master Écologie, Biodiversité & Évolution", "2016", "École Normale Supérieure", "Paris, France", "Mention Très Bien",
+  "Licence de Biologie", "2013", "École Normale Supérieure", "Paris, France", "Mention Bien",
+  "Classe Préparatoire BCPST", "2010-2012", "Lycée Saint-Louis", "Paris, France", "",
+) %>% 
+  detailed_entries(Institution, Year, Degree, Where)
+```
+
+# Publications
+
+## Peer-Reviewed
+
+```{r}
+library(dplyr)
+library(httr)
+
+GET("https://api.archives-ouvertes.fr/search/?q=authIdHal_s:hugo-gruson&wt=bibtex") %>%
+  content() %>%
+  write("hugo.bib")
+
+bibliography_entries("hugo.bib")
+```
+
+## Pre-prints
+
+```{r}
+library(dplyr)
+scholar::get_publications("CfhF32UAAAAJ") %>% 
+  filter(journal %in% c("bioRxiv", "medRxiv")) %>% 
+  filter(title != "Distribution of iridescent colours in hummingbird communities results from the interplay between selection for camouflage and communication") %>%
+  transmute(bibtype = "Article", 
+            author = as.character(author),
+            title = as.character(title),
+            journaltitle = as.character(journal), year, key = row_number()) %>% 
+  RefManageR::as.BibEntry() %>% 
+  RefManageR::WriteBib("preprints.bib")
+bibliography_entries("preprints.bib")
+```
+\clearpage
+
+## Billets de blog techniques
+
+- *Covidpreprints.com: Automating Website Updates with the europepmc and rAltmetric Packages* (2020), featured on [rOpenSci blog](https://ropensci.org/blog/2020/10/13/covidpreprints/) and [preLights blog](https://prelights.biologists.com/news/covidpreprints-com-automating-website-updates-with-the-europepmc-and-raltmetric-packages/).
+- *Community Captioning of rOpenSci Community Calls* (2020), featured on [rOpenSci blog](https://ropensci.org/blog/2020/07/15/subtitles/).
+- *Access Publisher Copyright & Self-Archiving Policies via the 'SHERPA/RoMEO' API* (2019), featured on [rOpenSci blog](https://ropensci.org/blog/2019/06/04/rromeo/).
+- *When Standards Go Wild - Software Review for a Manuscript* (2019), featured on [rOpenSci blog](https://ropensci.org/blog/2019/04/18/wild-standards/) and [Methods in Ecology and Evolution blog](https://methodsblog.com/2019/04/18/ropensci-code-review-guidelines/).
+
+# Software
+
+## Packages R validés par le CRAN
+
+```{r}
+pkgsearch::advanced_search(Author = "Gruson") %>%
+  filter(!package %in% c("treedata.table")) %>%
+  mutate(is_maintainer = ifelse(maintainer_name == "Hugo Gruson","maintainer", "")) %>%
+  arrange(desc(is_maintainer)) %>%
+  detailed_entries(title, version, package, is_maintainer)
+```
+
+## Autres
+
+```{r}
+tribble(~ title, ~ version, ~ package,
+        "Logiciel développé en Free Pascal, avec une interface GTK ou Qt (deux installeurs possibles), permettant la simulation et l'analyse de systèmes dynamiques déterministes ou stochastiques en temps discret.",
+        "2.0",
+        "ULM (Unified Life Models)") %>%
+  detailed_entries(title, version, package)
+```
+
+# Compétences informatiques
+
+## Expert
+
+- Développement R (y compris développement de packages)
+- Git (logiciel de contrôle de version)
+- Bonnes pratiques de développement logiciel (tests unitaires, tests de regression, etc.)
+- Rmarkdown (le présent CV est réalisé en Rmarkdown), LaTeX
+- Environnement GNU/Linux
+
+## Bonne maîtrise
+
+- Interfaces graphiques via R Shiny
+
+## Connaissance partielle
+
+- Python
+
+\clearpage
+
+```{r, child=c('../letter/letter.Rmd')}
+```
+
